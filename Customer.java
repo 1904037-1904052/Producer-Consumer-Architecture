@@ -8,7 +8,7 @@ public class Customer {
 
     public Customer(int arrivalTime) {
         this.arrivalTime = arrivalTime;
-        this.serviceTime = ThreadLocalRandom.current().nextInt(60, 301);
+        this.serviceTime = ThreadLocalRandom.current().nextInt(2, 30);
         this.served = false;
         this.departed = false;
     }
