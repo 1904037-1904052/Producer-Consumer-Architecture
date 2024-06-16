@@ -10,9 +10,12 @@ public class QueueSimulator {
     private int totalCustomersDeparted;
     private int totalCustomersServed;
     private int totalServiceTime;
+    private int numTellers;
+    Thread[] tellers;
 
     public QueueSimulator(int numTellers, int maxQueueLength, int simulationMinutes) {
         this.bankQueue = new BankQueue(maxQueueLength);
+        this.numTellers = numTellers;
         this.simulationTime = simulationMinutes * 60; // convert minutes to seconds
         this.customers = new ArrayList<>();
         this.totalCustomersArrived = 0;
@@ -21,8 +24,10 @@ public class QueueSimulator {
         this.totalServiceTime = 0;
 
         // Start teller threads
+        tellers = new Thread[numTellers];
         for (int i = 0; i < numTellers; i++) {
-            new Thread(new Teller(bankQueue, i, this)).start();
+            tellers[i] = new Thread(new Teller(bankQueue, i, this));
+            tellers[i].start();
         }
     }
 
@@ -34,7 +39,7 @@ public class QueueSimulator {
 
         while (currentTime < simulationTime) {
             // New customer arrival
-            if (currentTime % ThreadLocalRandom.current().nextInt(20, 61) == 0) {
+            if (currentTime % ThreadLocalRandom.current().nextInt(2, 6) == 0) {
                 Customer customer = new Customer(currentTime);
                 customers.add(customer);
                 totalCustomersArrived++;
@@ -56,6 +61,9 @@ public class QueueSimulator {
         bankQueue.stop();
         try {
             queueThread.join();
+            for(int i = 0; i < numTellers; i++) {
+                tellers[i].join();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -75,7 +83,7 @@ public class QueueSimulator {
     }
 
     public static void main(String[] args) {
-        int numTellers = 3;
+        int numTellers = 4;
         int maxQueueLength = 5;
         int simulationMinutes = 1; // 2 hours
 
