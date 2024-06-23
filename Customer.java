@@ -13,6 +13,13 @@ public class Customer {
         this.departed = false;
     }
 
+    public Customer(Customer copy) {
+        this.arrivalTime = copy.getArrivalTime();
+        this.serviceTime = copy.getServiceTime();
+        this.served = false;
+        this.departed = false;
+    }
+
     public int getArrivalTime() {
         return arrivalTime;
     }

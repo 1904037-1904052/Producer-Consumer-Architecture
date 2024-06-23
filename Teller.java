@@ -17,16 +17,16 @@ public class Teller implements Runnable {
             if (customer == null) {
                 break; // Stop if the queue manager has stopped
             }
-            System.out.printf("Teller %d is taking new customer with service time : %d, arrival time : %d\n", id, customer.getServiceTime(), customer.getArrivalTime());
+            // System.out.printf("Teller %d is taking new customer with service time : %d, arrival time : %d\n", id, customer.getServiceTime(), customer.getArrivalTime());
             if (!customer.isDeparted()) {
                 customer.setServed(true);
-                queueSimulator.customerServed(customer.getServiceTime());
+                queueSimulator.BankcustomerServed(customer.getServiceTime());
                 try {
                     Thread.sleep(customer.getServiceTime() * 1000); // Simulate service time
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                System.out.printf("Teller %d ends work\n", id);
+                // System.out.printf("Teller %d ends work\n", id);
             }
         }
         System.out.printf("Teller %d ends its works!\n", id);

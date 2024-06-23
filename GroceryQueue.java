@@ -4,14 +4,16 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 
-public class BankQueue implements Runnable {
+public class GroceryQueue implements Runnable {
+    private final int index;
     private final int maxQueueLength;
     private final Queue<Customer> queue;
     private final Lock lock;
     private final Condition queueNotEmpty;
     private volatile boolean running;
 
-    public BankQueue(int maxQueueLength) {
+    public GroceryQueue(int maxQueueLength, int index) {
+        this.index = index;
         this.maxQueueLength = maxQueueLength;
         this.queue = new LinkedList<>();
         this.lock = new ReentrantLock();
@@ -23,11 +25,11 @@ public class BankQueue implements Runnable {
         lock.lock();
         try {
             if (queue.size() < maxQueueLength) {
+                System.out.printf("GroceryQueue %d takes one customer\n", index);
                 queue.offer(customer);
-                queueNotEmpty.signal(); // Signal tellers that a customer is available
+                queueNotEmpty.signal(); // Signal cashier that a customer is available
                 return true;
             } else {
-                customer.setDeparted(true);
                 return false;
             }
         } finally {
@@ -50,11 +52,21 @@ public class BankQueue implements Runnable {
         }
     }
 
+    public int getQueueSize() {
+        lock.lock();
+        try {
+            System.out.println("Queue index :" + index + "size" + queue.size());
+            return queue.size();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public void stop() {
         lock.lock();
         try {
             running = false;
-            queueNotEmpty.signalAll(); // Wake up all waiting tellers
+            queueNotEmpty.signalAll(); // Wake up all waiting cashiers
         } finally {
             lock.unlock();
         }
@@ -63,7 +75,7 @@ public class BankQueue implements Runnable {
     @Override
     public void run() {
         // This thread just manages the queue and waits for new customers
-        // System.out.println("Thread BankQueue is running!");
+        System.out.printf("GroceryQueue queue %d starts working.\n", index);
         while (running) {
             try {
                 Thread.sleep(1000); // Just keep this thread alive
