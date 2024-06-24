@@ -1,34 +1,91 @@
-public class Cashier implements Runnable {
-    private final GroceryQueue groceryQueue;
-    private final int id;
-    private final QueueSimulator queueSimulator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.ReentrantLock;
 
-    public Cashier(GroceryQueue groceryQueue, int id, QueueSimulator queueSimulator) {
-        this.groceryQueue = groceryQueue;
+public class Cashier implements Runnable {
+    private final Queue<Customer> queue;
+    private final int maxQueueLength;
+    private final ReentrantLock lock;
+    private boolean running;
+    private final QueueSimulator simulator;
+    private final int id;
+
+    public Cashier(int maxQueueLength, QueueSimulator simulator, int id) {
+        this.queue = new LinkedList<>();
+        this.maxQueueLength = maxQueueLength;
+        this.lock = new ReentrantLock();
+        this.running = true;
+        this.simulator = simulator;
         this.id = id;
-        this.queueSimulator = queueSimulator;
+    }
+
+    public int getQueueSize() {
+        lock.lock();
+        try {
+            return queue.size();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public int getMaxQueueLength() {
+        return maxQueueLength;
+    }
+
+    public boolean addCustomer(Customer customer) {
+        lock.lock();
+        try {
+            if (queue.size() < maxQueueLength) {
+                System.out.printf("Cashier %d got new customer.\n", id);
+                queue.offer(customer);
+                return true;
+            }
+            return false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void stop() {
+        running = false;
     }
 
     @Override
     public void run() {
         System.out.printf("Cashier %d starts working.\n", id);
-        while (true) {
-            Customer customer = groceryQueue.getCustomerForService();
-            if (customer == null) {
-                break; // Stop if the queue manager has stopped
+        while (running) {
+            Customer customer = null;
+            lock.lock();
+            try {
+                if (!queue.isEmpty()) {
+                    customer = queue.poll();
+                }
+            } finally {
+                lock.unlock();
             }
-            if (!customer.isDeparted()) {
-                System.out.printf("Cashier %d is taking new customer with service time : %d, arrival time : %d\n", id, customer.getServiceTime(), customer.getArrivalTime());
-                customer.setServed(true);
-                queueSimulator.GrocerycustomerServed(customer.getServiceTime());
+
+            if (customer != null) {
                 try {
-                    Thread.sleep(customer.getServiceTime() * 10L); // Simulate service time
+                    int serviceTime = customer.getServiceTime(); // Use customer-specific service time
+                    int arrival = customer.getArrivalTime();
+                    System.out.printf("Time : %d, Cashier %d served customer, service time. %d, arrival %d\n", System.currentTimeMillis(), id, serviceTime, arrival);
+                    Thread.sleep(serviceTime * 1000L); // Simulate service time
+                    customer.setServed(true);
+                    // simulator.GrocerycustomerServed(serviceTime);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                System.out.printf("Cashier %d ends work\n", id);
+                // System.out.printf("Cashier %d ends work.\n", id);
+            }
+
+            try {
+                Thread.sleep(100); // Check for new customers every 100 milliseconds
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
-        System.out.printf("Cashier %d end wokring!\n", id);
+        System.out.printf("Cashier %d stops.\n", id);
+        
     }
 }

@@ -12,11 +12,11 @@ public class QueueSimulator {
     private int[] totalCustomersServed = new int[2];
     private int[] totalServiceTime = new int[2];
     private int numTellers;
-    Thread[] tellers, Cashier;
+    Thread[] tellers;
 
     public QueueSimulator(int numTellers, int maxBankQueueLength, int numCashiers, int maxGroceryQueueLength, int simulationMinutes) {
         this.bankQueue = new BankQueue(maxBankQueueLength);
-        this.groceryQueues = new GroceryQueues(numCashiers, maxGroceryQueueLength);
+        this.groceryQueues = new GroceryQueues(numCashiers, maxGroceryQueueLength, this);
         this.numTellers = numTellers;
         this.simulationTime = simulationMinutes * 60; // convert minutes to seconds
         this.BankCustomers = new ArrayList<>();
@@ -35,17 +35,18 @@ public class QueueSimulator {
         //     tellers[i].start();
         // }
         // Start Cashier threads
-        Cashier = new Thread[numCashiers];
-        for(int i = 0; i < numCashiers; i++) {
-            Cashier[i] = new Thread(new Cashier(groceryQueues.getQueue(i), i, this));
-            Cashier[i].start();
-        }
+        // Cashier = new Thread[numCashiers];
+        // for(int i = 0; i < numCashiers; i++) {
+        //     Cashier[i] = new Thread(new Cashier(groceryQueues.getQueue(i), i, this));
+        //     Cashier[i].start();
+        // }
     }
 
     public void simulate() {
         // Thread bankQueueThread = new Thread(bankQueue);
         // bankQueueThread.start();
-        
+        groceryQueues.start();
+
         int currentTime = 0;
 
         while (currentTime < simulationTime) {
@@ -60,9 +61,7 @@ public class QueueSimulator {
                 // if (!bankQueue.addCustomer(customer)) {
                 //     totalCustomersDeparted[0]++;
                 // }
-                if(!groceryQueues.addCustomer(copyOfCustomer)) {
-                    totalCustomersDeparted[1]++;
-                }
+                groceryQueues.addCustomer(copyOfCustomer);
 
 
             }
@@ -78,29 +77,36 @@ public class QueueSimulator {
 
         // Stop the queue manager and wait for its thread to finish
         // bankQueue.stop();
-        try {
+        groceryQueues.stopAllCashiers();
+        // try {
             
-            // for(int i = 0; i < numTellers; i++) {
-            //     tellers[i].join();
-            // }
-            groceryQueues.stopAllQueues();
+        //     // for(int i = 0; i < numTellers; i++) {
+        //     //     tellers[i].join();
+        //     // }
+            
 
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // } catch (InterruptedException e) {
+        //     Thread.currentThread().interrupt();
+        // }
     }
 
     public synchronized void BankcustomerServed(int serviceTime) {
         totalCustomersServed[0]++;
         totalServiceTime[0] += serviceTime;
     }
-    public synchronized void GrocerycustomerServed(int serviceTime) {
-        totalCustomersServed[1]++;
-        totalServiceTime[1] += serviceTime;
+    public synchronized void GrocerycustomerCalculate() {
+        for(Customer customer : GroceryCustomer) {
+            if(customer.isDeparted()) totalCustomersDeparted[1]++;
+            else {
+                totalCustomersServed[1]++;
+                totalServiceTime[1] += customer.getServiceTime();
+            }
+        }
     }
 
     public void printStatistics() {
         double[] averageServiceTime = new double[2];
+        GrocerycustomerCalculate();
         for(int i = 0; i < 2; i++) {
             averageServiceTime[i] = totalCustomersServed[i] > 0 ? (double) totalServiceTime[i] / totalCustomersServed[i] : 0;
             System.out.println("Total customers arrived: " + totalCustomersArrived);
