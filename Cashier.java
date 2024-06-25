@@ -1,6 +1,6 @@
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.ThreadLocalRandom;
+// import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Cashier implements Runnable {
@@ -8,7 +8,7 @@ public class Cashier implements Runnable {
     private final int maxQueueLength;
     private final ReentrantLock lock;
     private boolean running;
-    private final QueueSimulator simulator;
+    // private final QueueSimulator simulator;
     private final int id;
 
     public Cashier(int maxQueueLength, QueueSimulator simulator, int id) {
@@ -16,7 +16,7 @@ public class Cashier implements Runnable {
         this.maxQueueLength = maxQueueLength;
         this.lock = new ReentrantLock();
         this.running = true;
-        this.simulator = simulator;
+        // this.simulator = simulator;
         this.id = id;
     }
 
@@ -68,8 +68,9 @@ public class Cashier implements Runnable {
             if (customer != null) {
                 try {
                     int serviceTime = customer.getServiceTime(); // Use customer-specific service time
-                    int arrival = customer.getArrivalTime();
-                    System.out.printf("Time : %d, Cashier %d served customer, service time. %d, arrival %d\n", System.currentTimeMillis(), id, serviceTime, arrival);
+                    // int arrival = customer.getArrivalTime();
+                    customer.setServedTime(System.currentTimeMillis());
+                    // System.out.printf("Time : %d, Cashier %d served customer, service time. %d, arrival %d\n", System.currentTimeMillis(), id, serviceTime, arrival);
                     Thread.sleep(serviceTime * 1000L); // Simulate service time
                     customer.setServed(true);
                     // simulator.GrocerycustomerServed(serviceTime);
