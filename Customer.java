@@ -1,14 +1,16 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Customer {
-    private final int arrivalTime;
+    private final long arrivalTime;
     private final int serviceTime;
+    private long servedTime;
     private boolean served;
     private boolean departed;
 
-    public Customer(int arrivalTime) {
+    public Customer(long arrivalTime) {
         this.arrivalTime = arrivalTime;
         this.serviceTime = ThreadLocalRandom.current().nextInt(2, 30);
+        this.servedTime = arrivalTime;
         this.served = false;
         this.departed = false;
     }
@@ -16,16 +18,24 @@ public class Customer {
     public Customer(Customer copy) {
         this.arrivalTime = copy.getArrivalTime();
         this.serviceTime = copy.getServiceTime();
+        this.servedTime = copy.getServedTime();
         this.served = false;
         this.departed = false;
     }
 
-    public int getArrivalTime() {
+    public long getArrivalTime() {
         return arrivalTime;
     }
 
     public int getServiceTime() {
         return serviceTime;
+    }
+
+    public void setServedTime(long servedTime) {
+        this.servedTime = servedTime;
+    }
+    public long getServedTime() {
+        return servedTime;
     }
 
     public boolean isServed() {

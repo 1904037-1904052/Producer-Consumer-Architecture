@@ -19,8 +19,8 @@ public class Teller implements Runnable {
             }
             // System.out.printf("Teller %d is taking new customer with service time : %d, arrival time : %d\n", id, customer.getServiceTime(), customer.getArrivalTime());
             if (!customer.isDeparted()) {
+                customer.setServedTime(System.currentTimeMillis());
                 customer.setServed(true);
-                queueSimulator.BankcustomerServed(customer.getServiceTime());
                 try {
                     Thread.sleep(customer.getServiceTime() * 1000); // Simulate service time
                 } catch (InterruptedException e) {
