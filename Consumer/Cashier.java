@@ -1,7 +1,11 @@
+package Consumer;
 import java.util.LinkedList;
 import java.util.Queue;
 // import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantLock;
+
+import Model.Customer;
+import Producer.QueueSimulator;
 
 public class Cashier implements Runnable {
     private final Queue<Customer> queue;

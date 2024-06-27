@@ -1,6 +1,12 @@
+package Producer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import Consumer.Teller;
+import Model.Customer;
+import Queue.BankQueue;
+import Queue.GroceryQueues;
 
 public class QueueSimulator {
     private final BankQueue bankQueue;
@@ -31,7 +37,7 @@ public class QueueSimulator {
         // Start teller threads
         tellers = new Thread[numTellers];
         for (int i = 0; i < numTellers; i++) {
-            tellers[i] = new Thread(new Teller(bankQueue, i, this));
+            tellers[i] = new Thread(new Teller(bankQueue, i));
             tellers[i].start();
         }
         // Start Cashier threads
@@ -120,15 +126,5 @@ public class QueueSimulator {
         }
     }
 
-    public static void main(String[] args) {
-        int numTellers = 4;
-        int maxQueueLength = 5;
-        int numCashiers = 3; 
-        int maxGroceryQueueLength = 2;
-        int simulationMinutes = 1; // 2 hours
-
-        QueueSimulator simulator = new QueueSimulator(numTellers, maxQueueLength, numCashiers, maxGroceryQueueLength, simulationMinutes);
-        simulator.simulate();
-        simulator.printStatistics();
-    }
+    
 }
