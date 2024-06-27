@@ -1,6 +1,11 @@
+package Queue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+
+import Consumer.Cashier;
+import Model.Customer;
+import Producer.QueueSimulator;
 
 public class GroceryQueues {
     private final List<Cashier> cashiers;
@@ -27,7 +32,7 @@ public class GroceryQueues {
     }
 
     public void addCustomer(Customer customer) {
-        System.out.printf("arrival %d\n", customer.getArrivalTime());
+        // System.out.printf("arrival %d\n", customer.getArrivalTime());
         new Thread(() -> {
             long startTime = System.currentTimeMillis();
             boolean added = false;
@@ -61,7 +66,7 @@ public class GroceryQueues {
             }
 
             if (!added) {
-                System.out.printf("Customer departed which arrived at %d\n", customer.getArrivalTime());
+                // System.out.printf("Customer departed which arrived at %d\n", customer.getArrivalTime());
                 customer.setDeparted(true);
             }
         }).start();

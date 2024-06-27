@@ -1,12 +1,14 @@
+package Consumer;
+import Model.Customer;
+import Queue.BankQueue;
+
 public class Teller implements Runnable {
     private final BankQueue bankQueue;
     private final int id;
-    private final QueueSimulator queueSimulator;
 
-    public Teller(BankQueue bankQueue, int id, QueueSimulator queueSimulator) {
+    public Teller(BankQueue bankQueue, int id) {
         this.bankQueue = bankQueue;
         this.id = id;
-        this.queueSimulator = queueSimulator;
     }
 
     @Override
