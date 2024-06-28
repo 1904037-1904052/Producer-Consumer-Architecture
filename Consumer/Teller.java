@@ -19,7 +19,7 @@ public class Teller implements Runnable {
             if (customer == null) {
                 break; // Stop if the queue manager has stopped
             }
-            // System.out.printf("Teller %d is taking new customer with service time : %d, arrival time : %d\n", id, customer.getServiceTime(), customer.getArrivalTime());
+            System.out.printf("Teller %d is taking new customer with service time : %d\n\n", id, customer.getServiceTime());
             if (!customer.isDeparted()) {
                 customer.setServedTime(System.currentTimeMillis());
                 customer.setServed(true);

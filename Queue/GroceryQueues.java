@@ -66,7 +66,7 @@ public class GroceryQueues {
             }
 
             if (!added) {
-                // System.out.printf("Customer departed which arrived at %d\n", customer.getArrivalTime());
+                System.out.printf("Customer departed which arrived at %d\n", customer.getArrivalTime());
                 customer.setDeparted(true);
             }
         }).start();

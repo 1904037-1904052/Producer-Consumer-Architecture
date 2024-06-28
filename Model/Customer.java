@@ -10,7 +10,7 @@ public class Customer {
 
     public Customer(long arrivalTime) {
         this.arrivalTime = arrivalTime;
-        this.serviceTime = ThreadLocalRandom.current().nextInt(2, 30);
+        this.serviceTime = ThreadLocalRandom.current().nextInt(60, 300);
         this.servedTime = arrivalTime;
         this.served = false;
         this.departed = false;
