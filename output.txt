@@ -1,0 +1,12 @@
+---    --- BankQueue   --- ---
+Total customers arrived: 16
+Total customers departed without being served: 1
+Total customers served: 15
+Average amount of time taken to serve each customer: 110.54306666666666 seconds
+
+---  --- GroceryQueue    --- ---
+Total customers arrived: 16
+Total customers departed without being served: 0
+Total customers served: 10
+Average amount of time taken to serve each customer: 101.4103 seconds
+

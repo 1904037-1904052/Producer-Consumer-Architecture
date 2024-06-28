@@ -1,4 +1,7 @@
 package Producer;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,8 +22,16 @@ public class QueueSimulator {
     private int[] totalServiceTime = new int[2];
     private int numTellers;
     Thread[] tellers;
+    FileWriter output;
 
     public QueueSimulator(int numTellers, int maxBankQueueLength, int numCashiers, int maxGroceryQueueLength, int simulationMinutes) {
+        try {
+            output = new FileWriter("output.txt");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         this.bankQueue = new BankQueue(maxBankQueueLength);
         this.groceryQueues = new GroceryQueues(numCashiers, maxGroceryQueueLength, this);
         this.numTellers = numTellers;
@@ -57,7 +68,7 @@ public class QueueSimulator {
 
         while (currentTime < simulationTime) {
             // New customer arrival
-            if (currentTime % ThreadLocalRandom.current().nextInt(2, 6) == 0) {
+            if (currentTime % ThreadLocalRandom.current().nextInt(20, 60) == 0) {
                 Customer customer = new Customer(System.currentTimeMillis());
                 BankCustomers.add(customer);
                 Customer copyOfCustomer = new Customer(customer);
@@ -81,6 +92,7 @@ public class QueueSimulator {
             }
         }
 
+        System.out.println("QueueSimulation ends");
         // Stop the queue manager and wait for its thread to finish
         bankQueue.stop();
         groceryQueues.stopAllCashiers();
@@ -119,10 +131,25 @@ public class QueueSimulator {
         for(int i = 0; i < 2; i++) {
             averageServiceTime[i] = totalCustomersServed[i] > 0 ? (double) totalServiceTime[i] / totalCustomersServed[i] : 0;
             averageServiceTime[i] /= 1000.0;
-            System.out.println("Total customers arrived: " + totalCustomersArrived);
-            System.out.println("Total customers departed without being served: " + totalCustomersDeparted[i]);
-            System.out.println("Total customers served: " + totalCustomersServed[i]);
-            System.out.println("Average amount of time taken to serve each customer: " + averageServiceTime[i] + " seconds");
+            try {
+                if(i == 0) output.write("---    --- BankQueue   --- ---\n");
+                else output.write("---  --- GroceryQueue    --- ---\n");
+                output.write("Total customers arrived: " + totalCustomersArrived + "\n");
+                output.write("Total customers departed without being served: " + totalCustomersDeparted[i] + "\n");
+                output.write("Total customers served: " + totalCustomersServed[i] + "\n");
+                output.write("Average amount of time taken to serve each customer: " + averageServiceTime[i] + " seconds\n");
+                output.write("\n");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                System.out.print("Error\n");
+                e.printStackTrace();
+            }
+        }
+        try {
+            output.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

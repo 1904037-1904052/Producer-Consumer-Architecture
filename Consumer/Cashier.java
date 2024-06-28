@@ -41,7 +41,7 @@ public class Cashier implements Runnable {
         lock.lock();
         try {
             if (queue.size() < maxQueueLength) {
-                System.out.printf("Cashier %d got new customer.\n", id);
+                System.out.printf("Cashier %d got new customer.\n\n", id);
                 queue.offer(customer);
                 return true;
             }
