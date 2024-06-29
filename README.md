@@ -18,3 +18,17 @@ This project implement two different types of concurrent queues to determine whi
   - Customer’s arrival time.
   - Time needed for it to be served.
   - It departs without being served.
+
+## Parameters
+- Duration
+- Number of Tellers
+- Number of Cashiers
+- Capacity of Bank Queue
+- Capacity of Grocery Queue
+
+## Output
+For each queue :
+- Total customers arrived
+- Total customers departed without being served
+- Total customers served
+- Average amount of time taken to serve each customer
