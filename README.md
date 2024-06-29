@@ -32,3 +32,17 @@ For each queue :
 - Total customers departed without being served
 - Total customers served
 - Average amount of time taken to serve each customer
+
+## Usage
+### Compiling
+To compile all the Java files, navigate to the root directory of the repository and run the following command:
+```
+javac Consumer/*.java Producer/*.java Model/*.java Queue/*.java QueueSystem.java
+```
+### Run
+After compiling, you can run the main class using:
+```
+java QueueSystem
+```
+
+
