@@ -43,6 +43,7 @@ public class BankQueue implements Runnable {
             while (queue.isEmpty() && running) {
                 queueNotEmpty.await(); // Wait until a customer is available
             }
+            if(running == false) return null;
             return queue.poll();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -64,8 +65,8 @@ public class BankQueue implements Runnable {
 
     @Override
     public void run() {
-        // This thread just manages the queue and waits for new customers
         // System.out.println("Thread BankQueue is running!");
+        // This thread just manages the queue and waits for new customers
         while (running) {
             try {
                 Thread.sleep(1000); // Just keep this thread alive
@@ -73,5 +74,6 @@ public class BankQueue implements Runnable {
                 Thread.currentThread().interrupt();
             }
         }
+        System.out.println("BankQueue stops!\n");   
     }
 }

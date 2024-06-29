@@ -59,7 +59,7 @@ public class QueueSimulator {
         // }
     }
 
-    public void simulate() {
+    public void simulate() throws InterruptedException {
         Thread bankQueueThread = new Thread(bankQueue);
         bankQueueThread.start();
         groceryQueues.start();
@@ -92,16 +92,13 @@ public class QueueSimulator {
             }
         }
 
-        System.out.println("QueueSimulation ends");
+        System.out.println("QueueSimulation ends!\n");
         // Stop the queue manager and wait for its thread to finish
         bankQueue.stop();
         groceryQueues.stopAllCashiers();
-        try {
-            for(int i = 0; i < numTellers; i++) {
-                tellers[i].join();
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        for(int i = 0; i < numTellers; i++) {
+            tellers[i].interrupt();
+            tellers[i].join();
         }
     }
 
@@ -128,6 +125,12 @@ public class QueueSimulator {
         double[] averageServiceTime = new double[2];
         GrocerycustomerCalculate();
         BankcustomerCalculate();
+        try {
+            output.write("Simulation time : " + simulationTime + " seconds\n\n");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         for(int i = 0; i < 2; i++) {
             averageServiceTime[i] = totalCustomersServed[i] > 0 ? (double) totalServiceTime[i] / totalCustomersServed[i] : 0;
             averageServiceTime[i] /= 1000.0;
