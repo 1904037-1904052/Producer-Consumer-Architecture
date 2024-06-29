@@ -32,7 +32,6 @@ public class GroceryQueues {
     }
 
     public void addCustomer(Customer customer) {
-        // System.out.printf("arrival %d\n", customer.getArrivalTime());
         new Thread(() -> {
             long startTime = System.currentTimeMillis();
             boolean added = false;
@@ -66,7 +65,7 @@ public class GroceryQueues {
             }
 
             if (!added) {
-                System.out.printf("Customer departed which arrived at %d\n", customer.getArrivalTime());
+                System.out.printf("Customer departed from GroceryQueue which arrived at %d\n\n", customer.getArrivalTime());
                 customer.setDeparted(true);
             }
         }).start();
@@ -78,6 +77,7 @@ public class GroceryQueues {
         }
         for(int i = 0; i < numCashiers; i++) {
             try {
+                CashierThread[i].interrupt();
                 CashierThread[i].join();
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block

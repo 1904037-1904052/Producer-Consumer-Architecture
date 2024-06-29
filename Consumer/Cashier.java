@@ -41,7 +41,7 @@ public class Cashier implements Runnable {
         lock.lock();
         try {
             if (queue.size() < maxQueueLength) {
-                System.out.printf("Cashier %d got new customer.\n\n", id);
+                System.out.printf("Cashier Queue %d got new customer.\n\n", id);
                 queue.offer(customer);
                 return true;
             }
@@ -72,16 +72,13 @@ public class Cashier implements Runnable {
             if (customer != null) {
                 try {
                     int serviceTime = customer.getServiceTime(); // Use customer-specific service time
-                    // int arrival = customer.getArrivalTime();
                     customer.setServedTime(System.currentTimeMillis());
-                    // System.out.printf("Time : %d, Cashier %d served customer, service time. %d, arrival %d\n", System.currentTimeMillis(), id, serviceTime, arrival);
+                    System.out.printf("Cashier %d served customer, service time : %d\n\n", id, serviceTime);
                     Thread.sleep(serviceTime * 1000L); // Simulate service time
                     customer.setServed(true);
-                    // simulator.GrocerycustomerServed(serviceTime);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                // System.out.printf("Cashier %d ends work.\n", id);
             }
 
             try {
